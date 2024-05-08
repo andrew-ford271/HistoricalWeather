@@ -39,27 +39,11 @@ namespace HistoricalWeather
                 records = csv.GetRecords<DailyWeather>().ToList();
             }
             
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
+
             var lines = await File.ReadAllLinesAsync("ghcnd-stations.txt");
-            List<GhcndStations> stations = [.. ParseWeatherData(lines)];
-            
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+            List<GhcndStation> stations = [.. ParseWeatherData(lines)];
+
+            GhcndStation closestStation = FindClosestStation(stations, 37.327000, -121.915700);
 
             app.MapGet("/GetMonthlyStatistics", (HttpContext httpContext) =>
             {
@@ -82,7 +66,51 @@ namespace HistoricalWeather
             app.Run();
         }
 
-        static IEnumerable<GhcndStations> ParseWeatherData(string[] lines)
+        protected static GhcndStation FindClosestStation(List<GhcndStation> ghcndStations, double targetLatitude, double targetLongitude)
+        {
+            GhcndStation closestStation = ghcndStations[0];
+            double minDistance = double.MaxValue;
+
+            foreach (var station in ghcndStations)
+            {
+                double distance = CalculateDistance(targetLatitude, targetLongitude, station.Latitude, station.Longitude);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestStation = station;
+                }
+            }
+
+
+            return closestStation;
+        }
+
+        //Calculates distances between two addresses using the Haversine Formula
+        static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            const double earthRadius = 6371; // Radius of the Earth in kilometers
+
+            // Convert latitude and longitude from degrees to radians
+            double lat1Rad = Math.PI * lat1 / 180;
+            double lon1Rad = Math.PI * lon1 / 180;
+            double lat2Rad = Math.PI * lat2 / 180;
+            double lon2Rad = Math.PI * lon2 / 180;
+
+            // Calculate differences in latitude and longitude
+            double latDiff = lat2Rad - lat1Rad;
+            double lonDiff = lon2Rad - lon1Rad;
+
+            // Calculate distance using Haversine formula
+            double a = Math.Pow(Math.Sin(latDiff / 2), 2) +
+                       Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
+                       Math.Pow(Math.Sin(lonDiff / 2), 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double distance = earthRadius * c;
+
+            return distance;
+        }
+
+        static IEnumerable<GhcndStation> ParseWeatherData(string[] lines)
         {
             foreach (string line in lines)
             {
@@ -95,7 +123,7 @@ namespace HistoricalWeather
                 string stationName = line.Substring(41, 32).Trim();
 
                 // Creating and returning WeatherData object
-                yield return new GhcndStations
+                yield return new GhcndStation
                 {
                     StationId = stationId,
                     Latitude = latitude,

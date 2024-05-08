@@ -1,6 +1,6 @@
 @HistoricalWeather_HostAddress = http://localhost:5212
 
-GET {{HistoricalWeather_HostAddress}}/weatherforecast/
+GET {{HistoricalWeather_HostAddress}}/GetMonthlyStatistics/
 Accept: application/json
 
 ###

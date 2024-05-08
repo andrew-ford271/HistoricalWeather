@@ -1,6 +1,6 @@
 ﻿namespace HistoricalWeather
 {
-    public class GhcndStations
+    public class GhcndStation
     {
         public required string StationId { get; set; }
 
