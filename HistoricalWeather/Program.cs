@@ -48,7 +48,7 @@ namespace HistoricalWeather
             var g = db.Stations.ToList();
 
             var stationInventorylines = await File.ReadAllLinesAsync("ghcnd-inventory.txt");
-            IEnumerable<StationDataType> stations2 = [.. StationService.ParseStationIndexData(stationInventorylines)];
+            IEnumerable<StationDataType> stations2 = StationService.ParseStationIndexData(stationInventorylines);
 
             var filePath = $"\\ghcnd_all\\{closestStation.Id}.dly";
             var lines2 = await File.ReadAllLinesAsync(filePath);

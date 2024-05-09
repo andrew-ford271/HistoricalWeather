@@ -3,18 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoricalWeather", "HistoricalWeather\HistoricalWeather.csproj", "{C42DDD95-7F1E-4806-8327-F2A5ED280FDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HistoricalWeather.Api", "HistoricalWeather\HistoricalWeather.Api.csproj", "{C42DDD95-7F1E-4806-8327-F2A5ED280FDE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1C756175-102D-417A-9D77-13E7344E1DD1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoricalWeather.Test", "HistoricalWeather.Test\HistoricalWeather.Test.csproj", "{A47A3DA2-FD8C-4B0B-AD4D-BA769D36A2A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HistoricalWeather.Test", "HistoricalWeather.Test\HistoricalWeather.Test.csproj", "{A47A3DA2-FD8C-4B0B-AD4D-BA769D36A2A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoricalWeather.EF", "HistoricalWeather.EF\HistoricalWeather.EF.csproj", "{8A7C3F53-6CB6-46BE-A1AF-6D4765B30D9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HistoricalWeather.EF", "HistoricalWeather.EF\HistoricalWeather.EF.csproj", "{8A7C3F53-6CB6-46BE-A1AF-6D4765B30D9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoricalWeather.Domain", "HistoricalWeather.Domain\HistoricalWeather.Domain.csproj", "{D343D72C-3735-4C92-B5D5-C3EE3CC55830}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HistoricalWeather.Domain", "HistoricalWeather.Domain\HistoricalWeather.Domain.csproj", "{D343D72C-3735-4C92-B5D5-C3EE3CC55830}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoricalWeather.SeedData", "HistoricalWeather.SeedData\HistoricalWeather.SeedData.csproj", "{F3324B54-D162-4461-804E-36EBE5C6FAD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{D343D72C-3735-4C92-B5D5-C3EE3CC55830}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D343D72C-3735-4C92-B5D5-C3EE3CC55830}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D343D72C-3735-4C92-B5D5-C3EE3CC55830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3324B54-D162-4461-804E-36EBE5C6FAD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3324B54-D162-4461-804E-36EBE5C6FAD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3324B54-D162-4461-804E-36EBE5C6FAD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3324B54-D162-4461-804E-36EBE5C6FAD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

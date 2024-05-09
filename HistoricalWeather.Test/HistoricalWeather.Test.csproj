@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HistoricalWeather\HistoricalWeather.csproj" />
+    <ProjectReference Include="..\HistoricalWeather\HistoricalWeather.Api.csproj" />
   </ItemGroup>
 
 </Project>
