@@ -1,4 +1,4 @@
-﻿using HistoricalWeather.Models;
+﻿using HistoricalWeather.Domain.Models;
 
 namespace HistoricalWeather.Services
 {
@@ -8,14 +8,14 @@ namespace HistoricalWeather.Services
         {
         }
 
-        public static GhcndStation FindClosestStation(IEnumerable<GhcndStation> ghcndStations, double targetLatitude, double targetLongitude)
+        public static Station FindClosestStation(IEnumerable<Station> ghcndStations, double targetLatitude, double targetLongitude)
         {
             if (!ghcndStations.Any())
             {
                 throw new InvalidOperationException("No stations available.");
             }
 
-            GhcndStation closestStation = ghcndStations.First();
+            Station closestStation = ghcndStations.First();
             double minDistance = double.MaxValue;
 
             foreach (var station in ghcndStations)
@@ -31,7 +31,7 @@ namespace HistoricalWeather.Services
             return closestStation;
         }
 
-        public static IEnumerable<GhcndStation> ParseStationData(string[] lines)
+        public static IEnumerable<Station> ParseStationData(string[] lines)
         {
             foreach (string line in lines)
             {
@@ -44,9 +44,9 @@ namespace HistoricalWeather.Services
                 string stationName = line.Substring(41, 32).Trim();
 
                 // Creating and returning WeatherData object
-                yield return new GhcndStation
+                yield return new Station
                 {
-                    StationId = stationId,
+                    Id = stationId,
                     Latitude = latitude,
                     Longitude = longitude,
                     Elevation = elevation,
@@ -56,7 +56,7 @@ namespace HistoricalWeather.Services
             }
         }
 
-        public static IEnumerable<GhcndIndex> ParseStationIndexData(string[] lines)
+        public static IEnumerable<StationDataType> ParseStationIndexData(string[] lines)
         {
             foreach (string line in lines)
             {
@@ -69,7 +69,7 @@ namespace HistoricalWeather.Services
                 int endDate = int.Parse(line.Substring(41, 4).Trim());
 
                 // Creating and returning WeatherData object
-                yield return new GhcndIndex
+                yield return new StationDataType
                 {
                     StationId = stationId,
                     Latitude = latitude,

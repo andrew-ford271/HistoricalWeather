@@ -1,17 +1,17 @@
-﻿using HistoricalWeather.Models;
+﻿using HistoricalWeather.Domain.Models;
 
 namespace HistoricalWeather.Services
 {
     public class StationRecordService
     {
-        public static IEnumerable<WeatherRecord> ParseFile(string[] lines)
+        public static IEnumerable<WeatherRecordMonth> ParseFile(string[] lines)
         {
 
             foreach (string line in lines)
             {
-                WeatherRecord record = new()
+                WeatherRecordMonth record = new()
                 {
-                    ID = line.Substring(0, 11).Trim(),
+                    StationId = line.Substring(0, 11).Trim(),
                     Year = int.Parse(line.Substring(11, 4).Trim()),
                     Month = int.Parse(line.Substring(15, 2).Trim()),
                     Element = line.Substring(17, 4).Trim(),
