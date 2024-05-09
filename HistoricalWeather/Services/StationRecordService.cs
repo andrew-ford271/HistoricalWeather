@@ -23,6 +23,7 @@ namespace HistoricalWeather.Services
                     int startIndex = 21 + (i * 8);
                     WeatherRecordDay day = new()
                     {
+                        Day = i + 1,
                         Value = int.Parse(line.Substring(startIndex, 5).Trim()),
                         MFlag = line[startIndex + 5],
                         QFlag = line[startIndex + 6],

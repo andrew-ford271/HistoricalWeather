@@ -3,6 +3,7 @@ using System;
 using HistoricalWeather.EF.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HistoricalWeather.EF.Migrations
 {
     [DbContext(typeof(NoaaWeatherContext))]
-    partial class NoaaWeatherContextModelSnapshot : ModelSnapshot
+    [Migration("20240509171849_DayColumn")]
+    partial class DayColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");

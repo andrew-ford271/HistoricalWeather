@@ -20,7 +20,7 @@ namespace HistoricalWeather.Domain.Models
         public string Element { get; set; }
 
         public virtual Station Station { get; set; }
-        
+
         public virtual ICollection<WeatherRecordDay> Days { get; set; }
     }
 }

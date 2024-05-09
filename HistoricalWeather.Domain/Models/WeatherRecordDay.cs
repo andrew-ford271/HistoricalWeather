@@ -7,6 +7,8 @@ namespace HistoricalWeather.Domain.Models
     {
         public int Id { get; set; }
 
+        public int Day { get; set; }
+
         [Column(TypeName = "char(4)")]
         public int Value { get; set; }
 
