@@ -11,10 +11,10 @@ namespace HistoricalWeather.Domain.Models
         [Column(TypeName = "char(11)")]
         public required string StationId { get; set; }
 
-        [Column(TypeName = "decimal(2,4)")]
+        [Column(TypeName = "decimal(6,4)")]
         public required double Latitude { get; set; }
 
-        [Column(TypeName = "decimal(3,4)")]
+        [Column(TypeName = "decimal(7,4)")]
         public required double Longitude { get; set; }
 
         [Column(TypeName = "char(4)")]

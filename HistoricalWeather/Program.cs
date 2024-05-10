@@ -1,7 +1,6 @@
 using HistoricalWeather.Domain.Models;
-using HistoricalWeather.Services;
 using HistoricalWeather.EF.Models;
-using Microsoft.EntityFrameworkCore;
+using HistoricalWeather.Services;
 
 namespace HistoricalWeather
 {
@@ -14,7 +13,6 @@ namespace HistoricalWeather
             // Add services to the container.
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<StationService>();
-            builder.Services.AddScoped<StationRecordService>();
             builder.Services.AddDbContext<NoaaWeatherContext>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -53,8 +51,6 @@ namespace HistoricalWeather
             var filePath = $"\\ghcnd_all\\{closestStation.Id}.dly";
             var lines2 = await File.ReadAllLinesAsync(filePath);
 
-            var t = StationRecordService.ParseFile(lines2);
-            var y = t.GroupBy(x => x.Element);
 
             app.Run();
         }
