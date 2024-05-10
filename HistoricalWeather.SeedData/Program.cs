@@ -38,7 +38,7 @@ namespace HistoricalWeather.SeedData
                 context.Database.ExecuteSqlRaw("DELETE FROM Stations");
                 context.SaveChanges();
 
-                DataTable stationTable = CreateDataTable(stations);
+                DataTable stationTable = CreateDataTableCombined(stations);
                 sqlBulkCopy.WriteToServer(stationTable);
                 Console.WriteLine("Station Data completed.");
             }
@@ -58,9 +58,9 @@ namespace HistoricalWeather.SeedData
                 context.SaveChanges();
 
                 Console.WriteLine("Adding Station Data Types...");
-                DataTable stationTable = CreateDataTable(stations);
+                DataTable stationTable = CreateDataTableCombined(stations);
                 sqlBulkCopy.WriteToServer(stationTable);
-                Console.WriteLine("Station Data Typecompleted.");
+                Console.WriteLine("Station Data Types completed.");
             }
         }
 
@@ -74,21 +74,20 @@ namespace HistoricalWeather.SeedData
             int i = 1;
             var stationCount = Directory.GetFiles(filePath).Length;
             List<WeatherRecordDay> weatherRecords = [];
-            DataTable dbTable;
+            DataTable weatherTable = CreateDataTable<WeatherRecordDay>();
 
             foreach (string file in Directory.GetFiles(filePath))
             {
-                weatherRecords.AddRange(ParseWeatherRecordDayFile(file));
+                AddDataTableRecords(weatherTable, ParseWeatherRecordDayFile(file));
 
-                if (i % 100 == 0)
+                if (i % 1 == 0)
                     Console.WriteLine($"Scanned {i} out of {stationCount} Stations worth of WeatherRecords");
 
-                if (i % 250 == 0)
+                if (i % 1 == 0)
                 {
-                    dbTable = CreateDataTable(weatherRecords);
                     weatherRecords.Clear();
-                    sqlBulkCopy.WriteToServer(dbTable);
-                    dbTable.Clear();
+                    sqlBulkCopy.WriteToServer(weatherTable);
+                    weatherTable.Rows.Clear();
                     Console.WriteLine($"Finished saving {i} WeatherRecords");
                 }
 
@@ -96,8 +95,7 @@ namespace HistoricalWeather.SeedData
             }
 
             //Get last set of records
-            dbTable = CreateDataTable(weatherRecords);
-            sqlBulkCopy.WriteToServer(dbTable);
+            sqlBulkCopy.WriteToServer(weatherTable);
             weatherRecords.Clear();
             Console.WriteLine($"Finished saving {i} WeatherRecords");
 
@@ -136,20 +134,19 @@ namespace HistoricalWeather.SeedData
             return weatherRecordDays;
         }
 
-        public static DataTable CreateDataTable<T>(IEnumerable<T> list)
+        public static DataTable CreateDataTableCombined<T>(IEnumerable<T> list)
+        {
+            DataTable dataTable = CreateDataTable<T>();
+            AddDataTableRecords(dataTable, list);
+            return dataTable;
+        }
+
+        public static void AddDataTableRecords<T>(DataTable dataTable, IEnumerable<T> list)
         {
             Type type = typeof(T);
 
             //skip virtual properties as they aren't actually columns in the db
             var properties = type.GetProperties().Where(p => p.GetMethod != null && !p.GetMethod.IsVirtual).ToArray();
-
-            DataTable dataTable = new DataTable();
-            dataTable.TableName = typeof(T).FullName;
-            foreach (PropertyInfo info in properties)
-            {
-
-                dataTable.Columns.Add(new DataColumn(info.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
-            }
 
             foreach (T entity in list)
             {
@@ -160,6 +157,21 @@ namespace HistoricalWeather.SeedData
                 }
 
                 dataTable.Rows.Add(values);
+            }
+        }
+        public static DataTable CreateDataTable<T>()
+        {
+            Type type = typeof(T);
+
+            //skip virtual properties as they aren't actually columns in the db
+            var properties = type.GetProperties().Where(p => p.GetMethod != null && !p.GetMethod.IsVirtual).ToArray();
+
+            DataTable dataTable = new();
+            dataTable.TableName = type.FullName;
+
+            foreach (PropertyInfo info in properties)
+            {
+                dataTable.Columns.Add(new DataColumn(info.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
             }
 
             return dataTable;
