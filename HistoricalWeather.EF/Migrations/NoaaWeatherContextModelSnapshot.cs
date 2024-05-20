@@ -82,7 +82,7 @@ namespace HistoricalWeather.EF.Migrations
                     b.ToTable("StationDataTypes");
                 });
 
-            modelBuilder.Entity("HistoricalWeather.Domain.Models.WeatherRecordDay", b =>
+            modelBuilder.Entity("HistoricalWeather.Domain.Models.WeatherRecord", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -126,7 +126,7 @@ namespace HistoricalWeather.EF.Migrations
 
                     b.HasIndex("StationId");
 
-                    b.ToTable("WeatherRecordDays");
+                    b.ToTable("WeatherRecords");
                 });
 
             modelBuilder.Entity("HistoricalWeather.Domain.Models.StationDataType", b =>
@@ -140,7 +140,7 @@ namespace HistoricalWeather.EF.Migrations
                     b.Navigation("Station");
                 });
 
-            modelBuilder.Entity("HistoricalWeather.Domain.Models.WeatherRecordDay", b =>
+            modelBuilder.Entity("HistoricalWeather.Domain.Models.WeatherRecord", b =>
                 {
                     b.HasOne("HistoricalWeather.Domain.Models.Station", "Station")
                         .WithMany()

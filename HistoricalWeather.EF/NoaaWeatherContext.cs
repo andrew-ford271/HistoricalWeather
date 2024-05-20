@@ -16,6 +16,6 @@ namespace HistoricalWeather.EF.Models
 
         public DbSet<Station> Stations { get; set; }
         public DbSet<StationDataType> StationDataTypes { get; set; }
-        public DbSet<WeatherRecordDay> WeatherRecordDays { get; set; }
+        public DbSet<WeatherRecord> WeatherRecords { get; set; }
     }
 }

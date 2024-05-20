@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoricalWeather.Domain.Models
 {
-    public class WeatherRecordDay
+    public class WeatherRecord
     {
         [Key]
         public long Id { get; set; }
@@ -34,7 +34,6 @@ namespace HistoricalWeather.Domain.Models
         [Column(TypeName = "nchar(1)")]
         public char SFlag { get; set; }
 
-        //public virtual WeatherRecordMonth WeatherRecordMonth { get; set; }
         public virtual Station Station { get; set; }
     }
 }

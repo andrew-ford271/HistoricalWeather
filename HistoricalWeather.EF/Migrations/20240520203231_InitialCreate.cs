@@ -51,7 +51,7 @@ namespace HistoricalWeather.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WeatherRecordDays",
+                name: "WeatherRecords",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -68,9 +68,9 @@ namespace HistoricalWeather.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeatherRecordDays", x => x.Id);
+                    table.PrimaryKey("PK_WeatherRecords", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WeatherRecordDays_Stations_StationId",
+                        name: "FK_WeatherRecords_Stations_StationId",
                         column: x => x.StationId,
                         principalTable: "Stations",
                         principalColumn: "Id",
@@ -83,8 +83,8 @@ namespace HistoricalWeather.EF.Migrations
                 column: "StationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WeatherRecordDays_StationId",
-                table: "WeatherRecordDays",
+                name: "IX_WeatherRecords_StationId",
+                table: "WeatherRecords",
                 column: "StationId");
         }
 
@@ -95,7 +95,7 @@ namespace HistoricalWeather.EF.Migrations
                 name: "StationDataTypes");
 
             migrationBuilder.DropTable(
-                name: "WeatherRecordDays");
+                name: "WeatherRecords");
 
             migrationBuilder.DropTable(
                 name: "Stations");

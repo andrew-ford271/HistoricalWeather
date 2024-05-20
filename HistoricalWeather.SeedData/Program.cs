@@ -67,14 +67,13 @@ namespace HistoricalWeather.SeedData
         protected static void BulkAddWeatherRecords()
         {
             //no way to validate all the data for all WeatherRecords.
-            sqlBulkCopy.DestinationTableName = "WeatherRecordDays";
+            sqlBulkCopy.DestinationTableName = "WeatherRecords";
             var filePath = $"C:\\Users\\12254\\Downloads\\ghcnd_all\\";
-            context.Database.ExecuteSqlRaw("TRUNCATE TABLE WeatherRecordDays");
+            context.Database.ExecuteSqlRaw("TRUNCATE TABLE WeatherRecords");
 
             int i = 1;
             var stationCount = Directory.GetFiles(filePath).Length;
-            List<WeatherRecordDay> weatherRecords = [];
-            DataTable weatherTable = CreateDataTable<WeatherRecordDay>();
+            DataTable weatherTable = CreateDataTable<WeatherRecord>();
 
             foreach (string file in Directory.GetFiles(filePath))
             {
@@ -102,10 +101,10 @@ namespace HistoricalWeather.SeedData
             context.Database.ExecuteSqlRaw("TRUNCATE TABLE WeatherRecordDays");
         }
 
-        public static IEnumerable<WeatherRecordDay> ParseWeatherRecordDayFile(string file)
+        public static IEnumerable<WeatherRecord> ParseWeatherRecordDayFile(string file)
         {
 
-            List<WeatherRecordDay> weatherRecordDays = [];
+            List<WeatherRecord> weatherRecordDays = [];
 
             var lines = File.ReadLines(file);
 
@@ -115,7 +114,7 @@ namespace HistoricalWeather.SeedData
                 {
                     int startIndex = 21 + (i * 8);
 
-                    WeatherRecordDay day = new()
+                    WeatherRecord day = new()
                     {
                         StationId = line.Substring(0, 11).Trim(),
                         Year = int.Parse(line.Substring(11, 4).Trim()),
