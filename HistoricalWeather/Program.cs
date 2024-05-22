@@ -1,15 +1,15 @@
+using HistoricalWeather.Api.Services;
 using HistoricalWeather.Domain.Models;
-using HistoricalWeather.EF.Models;
-using HistoricalWeather.Services;
+using HistoricalWeather.EF;
 using Microsoft.EntityFrameworkCore;
 
-namespace HistoricalWeather
+namespace HistoricalWeather.Api
 {
     public class Program
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddAuthorization();
@@ -19,7 +19,7 @@ namespace HistoricalWeather
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -35,19 +35,19 @@ namespace HistoricalWeather
             DbContextOptionsBuilder dbContextOptionsBuilder = new();
             dbContextOptionsBuilder.UseSqlServer();
 
-            var lines = await File.ReadAllLinesAsync("ghcnd-stations.txt");
+            string[] lines = await File.ReadAllLinesAsync("ghcnd-stations.txt");
             IEnumerable<Station> stations = StationService.ParseStationData(lines);
 
             Station closestStation = StationService.FindClosestStation(stations, 37.327000, -121.915700);
 
-            var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
+            Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
+            string path = Environment.GetFolderPath(folder);
 
-            var stationInventorylines = await File.ReadAllLinesAsync("ghcnd-inventory.txt");
+            string[] stationInventorylines = await File.ReadAllLinesAsync("ghcnd-inventory.txt");
             IEnumerable<StationDataType> stations2 = StationService.ParseStationIndexData(stationInventorylines);
 
-            var filePath = $"\\ghcnd_all\\{closestStation.Id}.dly";
-            var lines2 = await File.ReadAllLinesAsync(filePath);
+            string filePath = $"\\ghcnd_all\\{closestStation.Id}.dly";
+            string[] lines2 = await File.ReadAllLinesAsync(filePath);
 
             app.Run();
         }

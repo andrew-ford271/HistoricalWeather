@@ -1,5 +1,5 @@
 ﻿using HistoricalWeather.Domain.Models;
-using HistoricalWeather.EF.Models;
+using HistoricalWeather.EF;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,19 +14,21 @@ namespace HistoricalWeather.SeedData
         protected static SqlBulkCopy sqlBulkCopy;
         protected static IConfigurationRoot config;
 
-        static void Main()
+        private static void Main()
         {
-             config = new ConfigurationBuilder()
-            .AddUserSecrets<Program>()
-            .Build();
+            config = new ConfigurationBuilder()
+           .AddUserSecrets<Program>()
+           .Build();
             DbContextOptionsBuilder<NoaaWeatherContext> options = new();
 
             Console.WriteLine("Beginning Data Seeding for Historical Weather...");
 
             context = new NoaaWeatherContext(options: options.UseSqlServer(config["ConnectionString"]).Options);
 
-            sqlBulkCopy = new SqlBulkCopy(config["ConnectionString"]);
-            sqlBulkCopy.BulkCopyTimeout = 120;
+            sqlBulkCopy = new SqlBulkCopy(config["ConnectionString"])
+            {
+                BulkCopyTimeout = 120
+            };
 
             BulkAddStationRecords();
             BulkAddStationDataTypeRecords();
@@ -77,15 +79,15 @@ namespace HistoricalWeather.SeedData
         {
             //no way to validate all the data for all WeatherRecords.
             sqlBulkCopy.DestinationTableName = "WeatherRecords";
-            var filePath = config["WeatherRecordDirectory"];
-            
+            string? filePath = config["WeatherRecordDirectory"];
+
             if (string.IsNullOrEmpty(filePath))
                 throw new ArgumentNullException("File path cannot be null or empty");
 
             context.Database.ExecuteSqlRaw("TRUNCATE TABLE WeatherRecords");
 
             int i = 1;
-            var stationCount = Directory.GetFiles(filePath).Length;
+            int stationCount = Directory.GetFiles(filePath).Length;
             DataTable weatherTable = CreateDataTable<WeatherRecord>();
 
             foreach (string file in Directory.GetFiles(filePath))
@@ -107,9 +109,9 @@ namespace HistoricalWeather.SeedData
 
             List<WeatherRecord> weatherRecordDays = [];
 
-            var lines = File.ReadLines(fileName);
+            IEnumerable<string> lines = File.ReadLines(fileName);
 
-            foreach (var line in lines)
+            foreach (string line in lines)
             {
                 for (int i = 0; i < 31; i++)
                 {
@@ -146,7 +148,7 @@ namespace HistoricalWeather.SeedData
             Type type = typeof(T);
 
             //skip virtual properties as they aren't actually columns in the db
-            var properties = type.GetProperties().Where(p => p.GetMethod != null && !p.GetMethod.IsVirtual).ToArray();
+            PropertyInfo[] properties = type.GetProperties().Where(p => p.GetMethod != null && !p.GetMethod.IsVirtual).ToArray();
 
             foreach (T entity in list)
             {
@@ -164,10 +166,12 @@ namespace HistoricalWeather.SeedData
             Type type = typeof(T);
 
             //skip virtual properties as they aren't actually columns in the db
-            var properties = type.GetProperties().Where(p => p.GetMethod != null && !p.GetMethod.IsVirtual).ToArray();
+            PropertyInfo[] properties = type.GetProperties().Where(p => p.GetMethod != null && !p.GetMethod.IsVirtual).ToArray();
 
-            DataTable dataTable = new();
-            dataTable.TableName = type.FullName;
+            DataTable dataTable = new()
+            {
+                TableName = type.FullName
+            };
 
             foreach (PropertyInfo info in properties)
             {
@@ -182,7 +186,7 @@ namespace HistoricalWeather.SeedData
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
 
-            var lines = File.ReadAllLines(fileName);
+            string[] lines = File.ReadAllLines(fileName);
 
             foreach (string line in lines)
             {
@@ -212,7 +216,7 @@ namespace HistoricalWeather.SeedData
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
 
-            var lines = File.ReadAllLines(fileName);
+            string[] lines = File.ReadAllLines(fileName);
 
             foreach (string line in lines)
             {

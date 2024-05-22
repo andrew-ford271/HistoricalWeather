@@ -1,7 +1,7 @@
 ﻿using HistoricalWeather.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HistoricalWeather.EF.Models
+namespace HistoricalWeather.EF
 {
     public class NoaaWeatherContext(DbContextOptions<NoaaWeatherContext> options) : DbContext(options)
     {

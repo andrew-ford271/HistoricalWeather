@@ -1,4 +1,4 @@
-using HistoricalWeather.Services;
+using HistoricalWeather.Api.Services;
 
 namespace HistoricalWeather.Test
 {

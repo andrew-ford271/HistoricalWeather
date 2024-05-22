@@ -1,6 +1,6 @@
 ﻿using HistoricalWeather.Domain.Models;
 
-namespace HistoricalWeather.Services
+namespace HistoricalWeather.Api.Services
 {
     public class StationService
     {
@@ -18,7 +18,7 @@ namespace HistoricalWeather.Services
             Station closestStation = ghcndStations.First();
             double minDistance = double.MaxValue;
 
-            foreach (var station in ghcndStations)
+            foreach (Station station in ghcndStations)
             {
                 double distance = CalculateDistance(targetLatitude, targetLongitude, station.Latitude, station.Longitude);
                 if (distance < minDistance)
@@ -113,13 +113,13 @@ namespace HistoricalWeather.Services
         }
         private static bool IsValidLatitude(double latitude)
         {
-            return latitude >= -90 && latitude <= 90;
+            return latitude is >= (-90) and <= 90;
         }
 
         // Function to validate longitude
         private static bool IsValidLongitude(double longitude)
         {
-            return longitude >= -180 && longitude <= 180;
+            return longitude is >= (-180) and <= 180;
         }
     }
 }
