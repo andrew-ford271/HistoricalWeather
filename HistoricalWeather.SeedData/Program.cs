@@ -2,6 +2,7 @@
 using HistoricalWeather.EF.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Reflection;
 
@@ -11,13 +12,21 @@ namespace HistoricalWeather.SeedData
     {
         protected static NoaaWeatherContext context;
         protected static SqlBulkCopy sqlBulkCopy;
+        protected static IConfigurationRoot config;
 
         static void Main()
         {
+             config = new ConfigurationBuilder()
+            .AddUserSecrets<Program>()
+            .Build();
+            DbContextOptionsBuilder<NoaaWeatherContext> options = new();
+
             Console.WriteLine("Beginning Data Seeding for Historical Weather...");
-            context = new NoaaWeatherContext();
+
+            context = new NoaaWeatherContext(options: options.UseSqlServer(config["ConnectionString"]).Options);
+
+            sqlBulkCopy = new SqlBulkCopy(config["ConnectionString"]);
             sqlBulkCopy.BulkCopyTimeout = 120;
-            //sqlBulkCopy.BatchSize = 24270262;
 
             BulkAddStationRecords();
             BulkAddStationDataTypeRecords();
@@ -29,7 +38,7 @@ namespace HistoricalWeather.SeedData
         {
             sqlBulkCopy.DestinationTableName = "Stations";
 
-            IEnumerable<Station> stations = ParseStationData("../../../ghcnd-files/ghcnd-stations.txt");
+            IEnumerable<Station> stations = ParseStationData(config["StationDirectory"]);
             int stationCount = context.Stations.Count();
 
             if (stationCount != stations.Count())
@@ -48,7 +57,7 @@ namespace HistoricalWeather.SeedData
         {
             sqlBulkCopy.DestinationTableName = "StationDataTypes";
 
-            IEnumerable<StationDataType> stations = ParseStationIndexData("../../../ghcnd-files/ghcnd-inventory.txt");
+            IEnumerable<StationDataType> stations = ParseStationIndexData(config["StationDirectory"]);
             int recordCount = context.StationDataTypes.Count();
 
             if (recordCount != stations.Count())
@@ -68,7 +77,11 @@ namespace HistoricalWeather.SeedData
         {
             //no way to validate all the data for all WeatherRecords.
             sqlBulkCopy.DestinationTableName = "WeatherRecords";
-            var filePath = $"C:\\Users\\12254\\Downloads\\ghcnd_all\\";
+            var filePath = config["WeatherDirectory"];
+            
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException("File path cannot be null or empty");
+
             context.Database.ExecuteSqlRaw("TRUNCATE TABLE WeatherRecords");
 
             int i = 1;
@@ -78,35 +91,23 @@ namespace HistoricalWeather.SeedData
             foreach (string file in Directory.GetFiles(filePath))
             {
                 AddDataTableRecords(weatherTable, ParseWeatherRecordDayFile(file));
+                Console.WriteLine($"Scanned {i} out of {stationCount} Stations worth of WeatherRecords");
 
-                if (i % 1 == 0)
-                    Console.WriteLine($"Scanned {i} out of {stationCount} Stations worth of WeatherRecords");
-
-                if (i % 1 == 0)
-                {
-                    weatherRecords.Clear();
-                    sqlBulkCopy.WriteToServer(weatherTable);
-                    weatherTable.Rows.Clear();
-                    Console.WriteLine($"Finished saving {i} WeatherRecords");
-                }
-
+                sqlBulkCopy.WriteToServer(weatherTable);
+                weatherTable.Rows.Clear();
+                Console.WriteLine($"Finished saving {i} WeatherRecords");
                 i++;
             }
-
-            //Get last set of records
-            sqlBulkCopy.WriteToServer(weatherTable);
-            weatherRecords.Clear();
-            Console.WriteLine($"Finished saving {i} WeatherRecords");
-
-            context.Database.ExecuteSqlRaw("TRUNCATE TABLE WeatherRecordDays");
         }
 
-        public static IEnumerable<WeatherRecord> ParseWeatherRecordDayFile(string file)
+        public static IEnumerable<WeatherRecord> ParseWeatherRecordDayFile(string? fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentNullException(nameof(fileName));
 
             List<WeatherRecord> weatherRecordDays = [];
 
-            var lines = File.ReadLines(file);
+            var lines = File.ReadLines(fileName);
 
             foreach (var line in lines)
             {
@@ -152,7 +153,7 @@ namespace HistoricalWeather.SeedData
                 object[] values = new object[properties.Length];
                 for (int i = 0; i < properties.Length; i++)
                 {
-                    values[i] = properties[i].GetValue(entity);
+                    values[i] = properties[i].GetValue(entity) ?? DBNull.Value;
                 }
 
                 dataTable.Rows.Add(values);
@@ -176,8 +177,11 @@ namespace HistoricalWeather.SeedData
             return dataTable;
         }
 
-        public static IEnumerable<StationDataType> ParseStationIndexData(string fileName)
+        public static IEnumerable<StationDataType> ParseStationIndexData(string? fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
+
             var lines = File.ReadAllLines(fileName);
 
             foreach (string line in lines)
@@ -203,8 +207,11 @@ namespace HistoricalWeather.SeedData
             }
         }
 
-        public static IEnumerable<Station> ParseStationData(string fileName)
+        public static IEnumerable<Station> ParseStationData(string? fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
+
             var lines = File.ReadAllLines(fileName);
 
             foreach (string line in lines)
@@ -229,23 +236,5 @@ namespace HistoricalWeather.SeedData
                 };
             }
         }
-
-        //public static IEnumerable<WeatherRecordMonth> ParseWeatherRecordFile(string file)
-        //{
-        //    var lines = File.ReadLines(file);
-
-        //    foreach (string line in lines)
-        //    {
-        //        WeatherRecordMonth record = new()
-        //        {
-        //            StationId = line.Substring(0, 11).Trim(),
-        //            Year = int.Parse(line.Substring(11, 4).Trim()),
-        //            Month = int.Parse(line.Substring(15, 2).Trim()),
-        //            Element = line.Substring(17, 4).Trim(),
-        //        };
-
-        //        yield return record;
-        //    }
-        //}
     }
 }

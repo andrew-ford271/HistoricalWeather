@@ -3,16 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HistoricalWeather.EF.Models
 {
-    public class NoaaWeatherContext : DbContext
+    public class NoaaWeatherContext(DbContextOptions<NoaaWeatherContext> options) : DbContext(options)
     {
         public string DbPath { get; }
 
-        public NoaaWeatherContext()
-        {
 
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlServer($"");
 
         public DbSet<Station> Stations { get; set; }
         public DbSet<StationDataType> StationDataTypes { get; set; }

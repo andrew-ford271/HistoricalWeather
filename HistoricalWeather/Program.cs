@@ -1,6 +1,7 @@
 using HistoricalWeather.Domain.Models;
 using HistoricalWeather.EF.Models;
 using HistoricalWeather.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace HistoricalWeather
 {
@@ -13,7 +14,7 @@ namespace HistoricalWeather
             // Add services to the container.
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<StationService>();
-            builder.Services.AddDbContext<NoaaWeatherContext>();
+            builder.Services.AddDbContext<NoaaWeatherContext>(options => options.UseSqlServer(builder.Configuration["ConnectionString"]));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -31,7 +32,8 @@ namespace HistoricalWeather
 
             app.UseAuthorization();
 
-            using var db = new NoaaWeatherContext();
+            DbContextOptionsBuilder dbContextOptionsBuilder = new();
+            dbContextOptionsBuilder.UseSqlServer();
 
             var lines = await File.ReadAllLinesAsync("ghcnd-stations.txt");
             IEnumerable<Station> stations = StationService.ParseStationData(lines);
@@ -40,10 +42,6 @@ namespace HistoricalWeather
 
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-
-            db.Add(closestStation);
-            db.SaveChanges();
-            var g = db.Stations.ToList();
 
             var stationInventorylines = await File.ReadAllLinesAsync("ghcnd-inventory.txt");
             IEnumerable<StationDataType> stations2 = StationService.ParseStationIndexData(stationInventorylines);
