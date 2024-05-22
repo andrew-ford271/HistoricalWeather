@@ -49,7 +49,6 @@ namespace HistoricalWeather
             var filePath = $"\\ghcnd_all\\{closestStation.Id}.dly";
             var lines2 = await File.ReadAllLinesAsync(filePath);
 
-
             app.Run();
         }
     }

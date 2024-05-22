@@ -57,7 +57,7 @@ namespace HistoricalWeather.SeedData
         {
             sqlBulkCopy.DestinationTableName = "StationDataTypes";
 
-            IEnumerable<StationDataType> stations = ParseStationIndexData(config["StationDirectory"]);
+            IEnumerable<StationDataType> stations = ParseStationTypeData(config["StationTypeDirectory"]);
             int recordCount = context.StationDataTypes.Count();
 
             if (recordCount != stations.Count())
@@ -77,7 +77,7 @@ namespace HistoricalWeather.SeedData
         {
             //no way to validate all the data for all WeatherRecords.
             sqlBulkCopy.DestinationTableName = "WeatherRecords";
-            var filePath = config["WeatherDirectory"];
+            var filePath = config["WeatherRecordDirectory"];
             
             if (string.IsNullOrEmpty(filePath))
                 throw new ArgumentNullException("File path cannot be null or empty");
@@ -177,7 +177,7 @@ namespace HistoricalWeather.SeedData
             return dataTable;
         }
 
-        public static IEnumerable<StationDataType> ParseStationIndexData(string? fileName)
+        public static IEnumerable<StationDataType> ParseStationTypeData(string? fileName)
         {
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
