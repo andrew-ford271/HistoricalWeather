@@ -1,5 +1,6 @@
 using HistoricalWeather.Api.Services;
 using HistoricalWeather.Domain.Models;
+using HistoricalWeather.Domain.Parameters;
 using HistoricalWeather.EF;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,13 +8,14 @@ namespace HistoricalWeather.Api
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<StationService>();
+            builder.Services.AddScoped<RecordService>();
             builder.Services.AddDbContext<NoaaWeatherContext>(options => options.UseSqlServer(builder.Configuration["ConnectionString"]));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -32,23 +34,31 @@ namespace HistoricalWeather.Api
 
             app.UseAuthorization();
 
-            DbContextOptionsBuilder dbContextOptionsBuilder = new();
-            dbContextOptionsBuilder.UseSqlServer();
+            app.MapGet("/ClosestStation", (double latitude, double longitude, NoaaWeatherContext noaaWeatherContext, StationService stationService) =>
+            {
+                return stationService.FindClosestStation(latitude, longitude);
+            })
+            .WithOpenApi();
 
-            string[] lines = await File.ReadAllLinesAsync("ghcnd-stations.txt");
-            IEnumerable<Station> stations = StationService.ParseStationData(lines);
+            app.MapGet("/Stations", (NoaaWeatherContext noaaWeatherContext, StationService stationService, int limit = 10, int offset = 0) =>
+            {
+                return stationService.GetAllStations(limit, offset);
+            })
+            .WithOpenApi();
 
-            Station closestStation = StationService.FindClosestStation(stations, 37.327000, -121.915700);
+            app.MapGet("/Stations/{stationId}", (string stationId, NoaaWeatherContext noaaWeatherContext, StationService stationService, int limit = 10, int offset = 0) =>
+            {
+                Station? station = stationService.GetStation(stationId);
+                return station == null ? Results.NotFound() : Results.Ok(station);
+            })
+            .WithOpenApi();
 
-            Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
-            string path = Environment.GetFolderPath(folder);
-
-            string[] stationInventorylines = await File.ReadAllLinesAsync("ghcnd-inventory.txt");
-            IEnumerable<StationDataType> stations2 = StationService.ParseStationIndexData(stationInventorylines);
-
-            string filePath = $"\\ghcnd_all\\{closestStation.Id}.dly";
-            string[] lines2 = await File.ReadAllLinesAsync(filePath);
-
+            app.MapGet("/Stations/{stationId}/WeatherRecords", (string stationId, NoaaWeatherContext noaaWeatherContext, RecordService recordService, [AsParameters] RecordParameters recordParameters) =>
+            {
+                return recordService.GetWeatherRecords(stationId, recordParameters);
+            })
+            .WithName("Records")
+            .WithOpenApi();
             app.Run();
         }
     }

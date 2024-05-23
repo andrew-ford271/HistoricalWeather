@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace HistoricalWeather.SeedData
 {
-    internal class Program
+    internal class SeedData
     {
         protected static NoaaWeatherContext context;
         protected static SqlBulkCopy sqlBulkCopy;
@@ -17,7 +17,7 @@ namespace HistoricalWeather.SeedData
         private static void Main()
         {
             config = new ConfigurationBuilder()
-           .AddUserSecrets<Program>()
+           .AddUserSecrets<SeedData>()
            .Build();
             DbContextOptionsBuilder<NoaaWeatherContext> options = new();
 
