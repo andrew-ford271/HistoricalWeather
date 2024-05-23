@@ -7,6 +7,8 @@
         ///<summary>Calculates distances between two addresses using the Haversine Formula </summary>
         public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
+            if (!IsValidCoordinate(lat1, lon1))
+                throw new ArgumentException("Must contain a valid latitude and longitude");
 
             // Convert latitude and longitude from degrees to radians
             double lat1Rad = Math.PI * lat1 / 180;
@@ -27,7 +29,7 @@
 
             return distance;
         }
-        public static bool IsValidCoordinate(double latitude, double longitude)
+        public static bool IsValidCoordinate(double? latitude, double? longitude)
         {
             return (latitude is >= (-90) and <= 90) && (longitude is >= (-180) and <= 180);
         }
