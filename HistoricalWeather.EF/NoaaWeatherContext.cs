@@ -8,7 +8,7 @@ namespace HistoricalWeather.EF
         public string DbPath { get; }
 
         public DbSet<Station> Stations { get; set; }
-        public DbSet<StationDataType> StationDataTypes { get; set; }
+        public DbSet<StationObservationType> StationObservationTypes { get; set; }
         public DbSet<WeatherRecord> WeatherRecords { get; set; }
     }
 }

@@ -8,6 +8,6 @@
 
         public int? Day { get; set; }
 
-        public string? Element { get; set; }
+        public string? ObservationType { get; set; }
     }
 }

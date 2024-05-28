@@ -27,23 +27,21 @@ namespace HistoricalWeather.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StationDataTypes",
+                name: "StationObservationTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StationId = table.Column<string>(type: "char(11)", nullable: false),
-                    Latitude = table.Column<decimal>(type: "decimal(6,4)", nullable: false),
-                    Longitude = table.Column<decimal>(type: "decimal(7,4)", nullable: false),
-                    Value = table.Column<string>(type: "char(4)", nullable: false),
+                    ObservationType = table.Column<string>(type: "char(4)", nullable: false),
                     StartDate = table.Column<int>(type: "int", nullable: false),
                     EndDate = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StationDataTypes", x => x.Id);
+                    table.PrimaryKey("PK_StationObservationTypes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StationDataTypes_Stations_StationId",
+                        name: "FK_StationObservationTypes_Stations_StationId",
                         column: x => x.StationId,
                         principalTable: "Stations",
                         principalColumn: "Id",
@@ -60,7 +58,7 @@ namespace HistoricalWeather.EF.Migrations
                     Year = table.Column<int>(type: "int", nullable: false),
                     Month = table.Column<int>(type: "int", nullable: false),
                     Day = table.Column<int>(type: "int", nullable: false),
-                    Element = table.Column<string>(type: "char(4)", nullable: false),
+                    ObservationType = table.Column<string>(type: "char(4)", nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     MFlag = table.Column<string>(type: "nchar(1)", nullable: false),
                     QFlag = table.Column<string>(type: "nchar(1)", nullable: false),
@@ -78,8 +76,8 @@ namespace HistoricalWeather.EF.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_StationDataTypes_StationId",
-                table: "StationDataTypes",
+                name: "IX_StationObservationTypes_StationId",
+                table: "StationObservationTypes",
                 column: "StationId");
 
             migrationBuilder.CreateIndex(
@@ -92,7 +90,7 @@ namespace HistoricalWeather.EF.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "StationDataTypes");
+                name: "StationObservationTypes");
 
             migrationBuilder.DropTable(
                 name: "WeatherRecords");

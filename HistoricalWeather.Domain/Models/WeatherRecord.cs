@@ -21,7 +21,7 @@ namespace HistoricalWeather.Domain.Models
         public int Day { get; set; }
 
         [Column(TypeName = "char(4)")]
-        public string Element { get; set; }
+        public string ObservationType { get; set; }
 
         public int Value { get; set; }
 

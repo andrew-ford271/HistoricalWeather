@@ -10,6 +10,6 @@
 
         public string? State { get; set; }
 
-        public string? Element { get; set; }
+        public string? ObservationType { get; set; }
     }
 }

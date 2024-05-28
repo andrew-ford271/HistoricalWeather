@@ -53,20 +53,25 @@ namespace HistoricalWeather.Api
             })
             .WithOpenApi();
 
-            app.MapGet("/Stations/{stationId}/StationDataTypes", (string stationId, NoaaWeatherContext noaaWeatherContext, StationService stationService) =>
+            app.MapGet("/Stations/{stationId}/StationObservationTypes", (string stationId, NoaaWeatherContext noaaWeatherContext, StationService stationService) =>
             {
-                return stationService.GetStationDataTypes(stationId);
+                return stationService.GetStationObservationTypes(stationId);
             })
-            .WithOpenApi();
+            .WithOpenApi(operation =>
+            {
+                operation.AddOpenApiParameterDescriptions();
+                return operation;
+            });
 
             app.MapGet("/Stations/{stationId}/WeatherRecords", (string stationId, NoaaWeatherContext noaaWeatherContext, RecordService recordService, [AsParameters] RecordParameters recordParameters) =>
             {
                 return recordService.GetWeatherRecords(stationId, recordParameters);
             })
-           .WithOpenApi(operation => new(operation)
+           .WithOpenApi(operation =>
            {
-               Summary = "Gets weather records for a particular station",
-               Description = "Gets weather records for a particular station"
+               operation.AddOpenApiParameterDescriptions();
+               operation.Summary = "Gets weather records for a particular station";
+               return operation;
            });
             app.Run();
         }

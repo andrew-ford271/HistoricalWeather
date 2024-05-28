@@ -31,7 +31,7 @@ namespace HistoricalWeather.SeedData
             };
 
             BulkAddStationRecords();
-            BulkAddStationDataTypeRecords();
+            BulkAddStationObservationTypeRecords();
             BulkAddWeatherRecords();
 
         }
@@ -55,20 +55,20 @@ namespace HistoricalWeather.SeedData
             }
         }
 
-        protected static void BulkAddStationDataTypeRecords()
+        protected static void BulkAddStationObservationTypeRecords()
         {
-            sqlBulkCopy.DestinationTableName = "StationDataTypes";
+            sqlBulkCopy.DestinationTableName = "StationObservationTypes";
 
-            IEnumerable<StationDataType> stations = ParseStationTypeData(config["StationTypeDirectory"]);
-            int recordCount = context.StationDataTypes.Count();
+            IEnumerable<StationObservationType> stations = ParseStationTypeData(config["StationTypeDirectory"]);
+            int recordCount = context.StationObservationTypes.Count();
 
             if (recordCount != stations.Count())
             {
-                Console.WriteLine("Removing Station Data Types...");
-                context.Database.ExecuteSqlRaw("TRUNCATE TABLE StationDataTypes");
+                Console.WriteLine("Removing Station Observation Types...");
+                context.Database.ExecuteSqlRaw("TRUNCATE TABLE StationObservationTypes");
                 context.SaveChanges();
 
-                Console.WriteLine("Adding Station Data Types...");
+                Console.WriteLine("Adding Station Observation Types...");
                 DataTable stationTable = CreateDataTableCombined(stations);
                 sqlBulkCopy.WriteToServer(stationTable);
                 Console.WriteLine("Station Data Types completed.");
@@ -122,7 +122,7 @@ namespace HistoricalWeather.SeedData
                         StationId = line.Substring(0, 11).Trim(),
                         Year = int.Parse(line.Substring(11, 4).Trim()),
                         Month = int.Parse(line.Substring(15, 2).Trim()),
-                        Element = line.Substring(17, 4).Trim(),
+                        ObservationType = line.Substring(17, 4).Trim(),
                         Day = i + 1,
                         Value = int.Parse(line.Substring(startIndex, 5).Trim()),
                         MFlag = line[startIndex + 5],
@@ -181,7 +181,7 @@ namespace HistoricalWeather.SeedData
             return dataTable;
         }
 
-        public static IEnumerable<StationDataType> ParseStationTypeData(string? fileName)
+        public static IEnumerable<StationObservationType> ParseStationTypeData(string? fileName)
         {
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
@@ -199,12 +199,10 @@ namespace HistoricalWeather.SeedData
                 int endDate = int.Parse(line.Substring(41, 4).Trim());
 
                 // Creating and returning WeatherData object
-                yield return new StationDataType
+                yield return new StationObservationType
                 {
                     StationId = stationId,
-                    Latitude = latitude,
-                    Longitude = longitude,
-                    Value = value,
+                    ObservationType = value,
                     StartDate = startDate,
                     EndDate = endDate
                 };

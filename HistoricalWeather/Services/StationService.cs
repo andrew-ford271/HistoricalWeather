@@ -43,9 +43,9 @@ namespace HistoricalWeather.Api.Services
             return stations.Skip(parameters.Offset ?? 0).Take(parameters.Limit ?? 100);
         }
 
-        public IEnumerable<StationDataType> GetStationDataTypes(string stationId)
+        public IEnumerable<StationObservationType> GetStationObservationTypes(string stationId)
         {
-            return context.StationDataTypes.Where(x => x.StationId == stationId);
+            return context.StationObservationTypes.Where(x => x.StationId == stationId);
         }
 
         public Station? GetStation(string stationId)

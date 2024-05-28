@@ -2,23 +2,16 @@
 
 namespace HistoricalWeather.Domain.Models
 {
-    public class StationDataType
+    public class StationObservationType
     {
-
         public int Id { get; set; }
 
         [ForeignKey("Station")]
         [Column(TypeName = "char(11)")]
         public required string StationId { get; set; }
 
-        [Column(TypeName = "decimal(6,4)")]
-        public required double Latitude { get; set; }
-
-        [Column(TypeName = "decimal(7,4)")]
-        public required double Longitude { get; set; }
-
         [Column(TypeName = "char(4)")]
-        public required string Value { get; set; }
+        public required string ObservationType { get; set; }
 
         public required int StartDate { get; set; }
 

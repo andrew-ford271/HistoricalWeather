@@ -21,8 +21,8 @@ namespace HistoricalWeather.Api.Services
             if (recordParameters.Day != null)
                 records = records.Where(x => x.Day == recordParameters.Day);
 
-            if (recordParameters.Element != null)
-                records = records.Where(x => x.Element == recordParameters.Element);
+            if (recordParameters.ObservationType != null)
+                records = records.Where(x => x.ObservationType == recordParameters.ObservationType);
 
             return records.Skip(recordParameters.Offset ?? 0).Take(recordParameters.Limit ?? 1000);
         }
