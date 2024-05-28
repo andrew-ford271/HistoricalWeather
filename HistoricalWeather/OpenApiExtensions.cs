@@ -8,6 +8,7 @@ namespace HistoricalWeather.Api
         private const string offset_description = "Represents how many elements from the start of the list are skipped.";
         private const string observation_type_description = "Represents the type of weather to filter on.";
         private const string station_id_description = "Represents the 11 character NOAA station name";
+        private const string state_description = "Represents the official 2 character state abbreviation (e.g. CA)";
 
         public static void AddOpenApiParameterDescriptions(this OpenApiOperation operation)
         {
@@ -22,6 +23,9 @@ namespace HistoricalWeather.Api
 
             if (operation.Parameters.Any(x => x.Name == "stationId"))
                 operation.Parameters.First(x => x.Name == "stationId").Description = station_id_description;
+
+            if (operation.Parameters.Any(x => x.Name == "State"))
+                operation.Parameters.First(x => x.Name == "State").Description = state_description;
         }
     }
 }

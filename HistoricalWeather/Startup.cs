@@ -38,30 +38,43 @@ namespace HistoricalWeather.Api
             {
                 return stationService.FindClosestStation(latitude, longitude);
             })
-            .WithOpenApi();
-
+           .WithOpenApi(operation =>
+           {
+               operation.AddOpenApiParameterDescriptions();
+               operation.Summary = "Gets the closest station to a coordinate pair";
+               return operation;
+           });
             app.MapGet("/Stations", (NoaaWeatherContext noaaWeatherContext, StationService stationService, [AsParameters] StationParameters stationParameters) =>
             {
                 return stationService.GetAllStations(stationParameters);
             })
-            .WithOpenApi();
-
+           .WithOpenApi(operation =>
+           {
+               operation.AddOpenApiParameterDescriptions();
+               operation.Summary = "Gets a list of weather stations";
+               return operation;
+           });
             app.MapGet("/Stations/{stationId}", (string stationId, NoaaWeatherContext noaaWeatherContext, StationService stationService, int limit = 10, int offset = 0) =>
             {
                 Station? station = stationService.GetStation(stationId);
                 return station == null ? Results.NotFound() : Results.Ok(station);
             })
-            .WithOpenApi();
-
+           .WithOpenApi(operation =>
+           {
+               operation.AddOpenApiParameterDescriptions();
+               operation.Summary = "Gets a weather station by ID";
+               return operation;
+           });
             app.MapGet("/Stations/{stationId}/StationObservationTypes", (string stationId, NoaaWeatherContext noaaWeatherContext, StationService stationService) =>
             {
                 return stationService.GetStationObservationTypes(stationId);
             })
-            .WithOpenApi(operation =>
-            {
-                operation.AddOpenApiParameterDescriptions();
-                return operation;
-            });
+           .WithOpenApi(operation =>
+           {
+               operation.AddOpenApiParameterDescriptions();
+               operation.Summary = "Gets a list of weather observation types for a weather station";
+               return operation;
+           });
 
             app.MapGet("/Stations/{stationId}/WeatherRecords", (string stationId, NoaaWeatherContext noaaWeatherContext, RecordService recordService, [AsParameters] RecordParameters recordParameters) =>
             {
