@@ -60,6 +60,8 @@ namespace HistoricalWeather.Api
                 Station? station = stationService.GetStation(stationId);
                 return station == null ? Results.NotFound() : Results.Ok(station);
             })
+           .Produces<Station>(StatusCodes.Status200OK)
+           .Produces(StatusCodes.Status404NotFound)
            .WithOpenApi(operation =>
            {
                operation.Summary = "Gets a weather station by ID";
