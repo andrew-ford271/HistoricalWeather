@@ -3,6 +3,7 @@ using HistoricalWeather.Domain.Models;
 using HistoricalWeather.Domain.Parameters;
 using HistoricalWeather.EF;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace HistoricalWeather.Api
 {
@@ -21,6 +22,14 @@ namespace HistoricalWeather.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
+                string description = File.ReadAllText("OpenApiHeader.md");
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Historical Weather API",
+                    Version = "v1",
+                    Description = description,
+
+                });
                 c.OperationFilter<AddParameterDescriptionsOperationFilter>();
             });
 
