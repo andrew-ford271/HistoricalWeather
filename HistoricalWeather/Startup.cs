@@ -19,7 +19,10 @@ namespace HistoricalWeather.Api
             builder.Services.AddDbContext<NoaaWeatherContext>(options => options.UseSqlServer(builder.Configuration["ConnectionString"]));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.OperationFilter<AddParameterDescriptionsOperationFilter>();
+            });
 
             WebApplication app = builder.Build();
 
@@ -40,7 +43,6 @@ namespace HistoricalWeather.Api
             })
            .WithOpenApi(operation =>
            {
-               operation.AddOpenApiParameterDescriptions();
                operation.Summary = "Gets the closest station to a coordinate pair";
                return operation;
            });
@@ -50,7 +52,6 @@ namespace HistoricalWeather.Api
             })
            .WithOpenApi(operation =>
            {
-               operation.AddOpenApiParameterDescriptions();
                operation.Summary = "Gets a list of weather stations";
                return operation;
            });
@@ -61,7 +62,6 @@ namespace HistoricalWeather.Api
             })
            .WithOpenApi(operation =>
            {
-               operation.AddOpenApiParameterDescriptions();
                operation.Summary = "Gets a weather station by ID";
                return operation;
            });
@@ -71,7 +71,6 @@ namespace HistoricalWeather.Api
             })
            .WithOpenApi(operation =>
            {
-               operation.AddOpenApiParameterDescriptions();
                operation.Summary = "Gets a list of weather observation types for a weather station";
                return operation;
            });
@@ -82,7 +81,6 @@ namespace HistoricalWeather.Api
             })
            .WithOpenApi(operation =>
            {
-               operation.AddOpenApiParameterDescriptions();
                operation.Summary = "Gets weather records for a particular station";
                return operation;
            });
